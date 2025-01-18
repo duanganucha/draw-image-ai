@@ -8,13 +8,35 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
     />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        font-family: system-ui, -apple-system, sans-serif;
+        font-family: "Mali", cursive;
       }
+
+      h1 {
+        font-weight: 600; /* Using Mali bold */
+      }
+
+      .subtitle {
+        font-weight: 400; /* Using Mali regular */
+      }
+
+      button {
+        font-family: "Mali", cursive;
+        font-weight: 500; /* Using Mali medium */
+      }
+
       body {
         background: linear-gradient(120deg, #4285f4 0%, #34a853 100%);
         min-height: 100vh;
@@ -43,60 +65,51 @@
       }
       .card {
         background: white;
-        padding: 20px;
-        min-height: calc(100vh - 116px);
-        margin: 0;
-        border-radius: 0;
-        box-shadow: none;
+        padding: 15px;
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
       }
 
       .card-content {
         display: flex;
         flex-direction: column;
         height: 100%;
-        gap: 20px;
+        gap: 15px;
       }
 
       @media (min-width: 768px) {
         .card-content {
           flex-direction: row;
-          max-width: 100%;
-          padding: 0 20px;
+          padding: 0 15px;
         }
+
         .media-section {
           flex: 1;
-          padding-right: 20px;
+          padding-right: 15px;
+          display: flex;
+          flex-direction: column;
         }
+
         .result-section {
           flex: 1;
           border-left: 1px solid #eee;
-          padding-left: 20px;
-        }
-        .media-container {
-          min-height: calc(100vh - 250px);
+          padding-left: 15px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
         }
       }
 
-      .media-section,
-      .result-section {
-        display: flex;
-        flex-direction: column;
-      }
       .media-container {
         position: relative;
         flex: 1;
-        min-height: 300px;
         display: flex;
         flex-direction: column;
+        min-height: 0;
       }
 
-      @media (min-width: 768px) {
-        .media-container {
-          min-height: 400px;
-        }
-      }
-
-      /* Add these new styles */
       .media-controls {
         position: absolute;
         top: 10px;
@@ -107,7 +120,8 @@
         z-index: 10;
       }
 
-      .upload-btn {
+      .upload-btn,
+      .switch-view {
         background: rgba(16, 148, 165, 0.9);
         padding: 8px 15px;
         border-radius: 20px;
@@ -117,102 +131,94 @@
         gap: 5px;
         transition: all 0.3s ease;
         color: white;
+        border: none;
+        font-size: 0.9rem;
       }
 
-      .upload-btn:hover {
+      .upload-btn:hover,
+      .switch-view:hover {
         background: #4285f4;
+        transform: scale(1.05);
       }
 
       .upload-btn input[type="file"] {
         display: none;
       }
 
-      .switch-view {
-        position: absolute;
-        right: 10px;
-        top: 10px;
-        z-index: 10;
-        background: rgba(16, 148, 165, 0.9);
-
-        padding: 8px 15px;
-        border-radius: 20px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        transition: all 0.3s ease;
-      }
-      .switch-view:hover {
-        background: #4285f4;
-        color: white;
-      }
-      .switch-view i {
-        font-size: 18px;
-      }
       #webcam,
       #captured-image {
         width: 100%;
         height: 100%;
         border-radius: 10px;
         border: 3px solid rgba(255, 255, 255, 0.5);
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         object-fit: contain;
+        background: #f8f9fa;
       }
+
       #captured-image {
         display: none;
       }
+
       button {
         background: #4285f4;
         color: white;
         border: none;
-        padding: 12px 24px;
+        padding: 10px 20px;
         border-radius: 25px;
         cursor: pointer;
         font-weight: 600;
         transition: 0.3s;
         margin: 5px;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
+
       button:hover {
         background: #1a73e8;
         transform: scale(1.05);
       }
+
       button:disabled {
         opacity: 0.7;
         cursor: not-allowed;
+        transform: none;
       }
+
       .result {
-        height: 100%;
-        margin-top: 0;
+        flex: 1;
+        margin: 0;
         padding: 15px;
         background: #f8f9fa;
         border-radius: 10px;
         display: none;
         overflow-y: auto;
       }
+
       .result.show {
         display: flex;
         flex-direction: column;
       }
-      .result-text-container {
-        flex: 1;
-        overflow-y: auto;
-        margin: 15px 0;
-      }
+
       .status-message {
         color: #666;
         margin-top: 10px;
         font-size: 0.9rem;
       }
+
       .spinner {
         display: none;
-        width: 20px;
-        height: 20px;
-        border: 3px solid #f3f3f3;
-        border-top: 3px solid #4285f4;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #4285f4;
         border-radius: 50%;
-        margin-left: 10px;
+        margin-left: 8px;
         animation: spin 1s linear infinite;
       }
+
       @keyframes spin {
         0% {
           transform: rotate(0deg);
@@ -221,19 +227,82 @@
           transform: rotate(360deg);
         }
       }
+
       .audio-controls {
-        margin-top: 15px;
+        margin-top: auto;
+        padding: 10px 0;
         display: flex;
         justify-content: center;
         gap: 10px;
       }
-      .audio-controls button {
-        display: flex;
-        align-items: center;
-        gap: 5px;
+
+      .keyword-section {
+        background: #f8f9fa;
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 10px;
       }
+
+      .keyword-input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 2px solid #4285f4;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        transition: border-color 0.3s;
+      }
+
+      .keyword-input:focus {
+        outline: none;
+        border-color: #1a73e8;
+        box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1);
+      }
+
+      .keyword-label {
+        display: block;
+        text-align: left;
+        margin-bottom: 5px;
+        color: #333;
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+
+      #result-text {
+        flex: 1;
+        overflow-y: auto;
+        text-align: left;
+        line-height: 1.6;
+        white-space: pre-line;
+        padding: 10px 0;
+        color: #333;
+      }
+
       #canvas {
         display: none;
+      }
+
+      /* Media query for height adjustments */
+      @media (max-height: 600px) {
+        h1 {
+          font-size: 1.5rem;
+          padding: 10px 0;
+        }
+        .subtitle {
+          padding: 5px 0;
+        }
+        .card {
+          padding: 10px;
+        }
+        .media-container {
+          min-height: 200px;
+        }
+      }
+
+      /* For very tall screens */
+      @media (min-height: 1000px) {
+        .media-container {
+          max-height: 60vh;
+        }
       }
     </style>
   </head>
@@ -259,7 +328,17 @@
               <img id="captured-image" alt="ภาพที่ถ่าย" />
             </div>
 
-            <div style="text-align: center; margin-top: 10px">
+            <div class="keyword-section">
+              <label class="keyword-label">คำสำคัญ (Keywords)</label>
+              <input
+                type="text"
+                id="keywords"
+                class="keyword-input"
+                placeholder="เช่น  ชื่อ ดช., ผจญภัย , กล้าหาญ"
+              />
+            </div>
+
+            <div style="text-align: center; margin-top: 0px">
               <button id="capture-btn">
                 ถ่ายภาพและเล่านิทาน
                 <span class="spinner"></span>
@@ -304,6 +383,7 @@
       type="text/javascript"
       src="https://www.freevisitorcounters.com/en/home/counter/1289408/t/5"
     ></script>
+
     <canvas id="canvas"></canvas>
 
     <script>
@@ -319,9 +399,10 @@
       const playBtn = document.getElementById("play-btn");
       const pauseBtn = document.getElementById("pause-btn");
       const stopBtn = document.getElementById("stop-btn");
+      const fileInput = document.getElementById("file-input");
 
       // Replace with your Gemini API key
-      const API_KEY = "AIzaSyDX0R1NxhpZXqUvVynrAMJygq9pPYhfCeQ";
+      const API_KEY = "AIzaSyAzNWswNDlZwScyPxiV-K80ehD8wGlVu-A";
       const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
       // Thai story prompt
@@ -331,6 +412,7 @@
         2. มีเหตุการณ์หรือปัญหาที่เกิดขึ้น
         3. วิธีแก้ปัญหาและบทสรุปที่มีข้อคิด
         4. ห้ามมีลัญลักษณ์พิเศษ
+        {keywords}
         โดยใช้ภาษาที่เข้าใจง่าย เหมาะสำหรับเด็ก`;
 
       let speechSynth = window.speechSynthesis;
@@ -338,9 +420,23 @@
       let currentUtterance = null;
       let currentFacingMode = "user";
 
+      fileInput.addEventListener("change", (e) => {
+        if (e.target.files && e.target.files[0]) {
+          const file = e.target.files[0];
+          const reader = new FileReader();
+
+          reader.onload = (e) => {
+            const base64Image = e.target.result;
+            showImage(base64Image);
+            uploadToGemini(base64Image);
+          };
+
+          reader.readAsDataURL(file);
+        }
+      });
+
       async function startWebcam(facingMode = "user") {
         try {
-          // Stop any existing stream
           if (video.srcObject) {
             video.srcObject.getTracks().forEach((track) => track.stop());
           }
@@ -383,6 +479,7 @@
         stopSpeaking();
         fileInput.value = ""; // Reset file input
       }
+
       function speakText(text) {
         stopSpeaking();
 
@@ -440,11 +537,18 @@
           captureBtn.disabled = true;
           statusDiv.textContent = "กำลังวิเคราะห์ภาพและเขียนนิทาน...";
 
+          // Get keywords and create prompt
+          const keywords = document.getElementById("keywords").value.trim();
+          const keywordText = keywords
+            ? `โดยต้องมีคำสำคัญต่อไปนี้ในเนื้อเรื่อง: ${keywords}`
+            : "";
+          const finalPrompt = STORY_PROMPT.replace("{keywords}", keywordText);
+
           const requestBody = {
             contents: [
               {
                 parts: [
-                  { text: STORY_PROMPT },
+                  { text: finalPrompt },
                   {
                     inline_data: {
                       mime_type: "image/jpeg",
@@ -504,23 +608,6 @@
           captureBtn.disabled = false;
         }
       }
-
-      const fileInput = document.getElementById("file-input");
-
-      fileInput.addEventListener("change", (e) => {
-        if (e.target.files && e.target.files[0]) {
-          const file = e.target.files[0];
-          const reader = new FileReader();
-
-          reader.onload = (e) => {
-            const base64Image = e.target.result;
-            showImage(base64Image);
-            uploadToGemini(base64Image);
-          };
-
-          reader.readAsDataURL(file);
-        }
-      });
 
       captureBtn.addEventListener("click", () => {
         const ctx = canvas.getContext("2d");
