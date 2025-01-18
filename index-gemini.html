@@ -95,6 +95,38 @@
           min-height: 400px;
         }
       }
+
+      /* Add these new styles */
+      .media-controls {
+        position: absolute;
+        top: 10px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 10px;
+        z-index: 10;
+      }
+
+      .upload-btn {
+        background: rgba(16, 148, 165, 0.9);
+        padding: 8px 15px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s ease;
+        color: white;
+      }
+
+      .upload-btn:hover {
+        background: #4285f4;
+      }
+
+      .upload-btn input[type="file"] {
+        display: none;
+      }
+
       .switch-view {
         position: absolute;
         right: 10px;
@@ -214,12 +246,19 @@
         <div class="card-content">
           <div class="media-section">
             <div class="media-container">
-              <button class="switch-view" id="switch-camera">
-                <i class="fas fa-camera-rotate"></i> สลับกล้อง
-              </button>
+              <div class="media-controls">
+                <label class="upload-btn">
+                  <i class="fas fa-image"></i> แนบรูปภาพ
+                  <input type="file" id="file-input" accept="image/*" />
+                </label>
+                <button class="switch-view" id="switch-camera">
+                  <i class="fas fa-camera-rotate"></i> สลับกล้อง
+                </button>
+              </div>
               <video id="webcam" autoplay playsinline></video>
               <img id="captured-image" alt="ภาพที่ถ่าย" />
             </div>
+
             <div style="text-align: center; margin-top: 10px">
               <button id="capture-btn">
                 ถ่ายภาพและเล่านิทาน
@@ -324,6 +363,9 @@
       }
 
       function showImage(imageUrl) {
+        if (video.srcObject) {
+          video.srcObject.getTracks().forEach((track) => track.stop());
+        }
         video.style.display = "none";
         capturedImage.src = imageUrl;
         capturedImage.style.display = "block";
@@ -331,15 +373,16 @@
         retakeBtn.style.display = "inline-block";
       }
 
-      function retakePhoto() {
+      async function retakePhoto() {
+        await startWebcam(currentFacingMode);
         video.style.display = "block";
         capturedImage.style.display = "none";
         captureBtn.style.display = "inline-block";
         retakeBtn.style.display = "none";
         result.classList.remove("show");
         stopSpeaking();
+        fileInput.value = ""; // Reset file input
       }
-
       function speakText(text) {
         stopSpeaking();
 
@@ -461,6 +504,23 @@
           captureBtn.disabled = false;
         }
       }
+
+      const fileInput = document.getElementById("file-input");
+
+      fileInput.addEventListener("change", (e) => {
+        if (e.target.files && e.target.files[0]) {
+          const file = e.target.files[0];
+          const reader = new FileReader();
+
+          reader.onload = (e) => {
+            const base64Image = e.target.result;
+            showImage(base64Image);
+            uploadToGemini(base64Image);
+          };
+
+          reader.readAsDataURL(file);
+        }
+      });
 
       captureBtn.addEventListener("click", () => {
         const ctx = canvas.getContext("2d");
